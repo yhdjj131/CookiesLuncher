@@ -196,7 +196,7 @@ SESSDATA=abc123; bili_jct=def456; DedeUserID=789
 运行后项目目录结构：
 
 ```
-CookiesLuncher/
+CookieLuncher/
 ├── main.py                  # 程序入口
 ├── export_for_action.py     # 命令行导出脚本（可选，与主菜单 3 共用同一套逻辑）
 ├── config.json              # 配置文件（首次运行生成）
