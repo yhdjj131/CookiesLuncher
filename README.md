@@ -57,7 +57,7 @@ python main.py
 
 ### 1. 启动浏览器（运行模式）
 
-选择已配置的网站，程序按「方案C」流程启动浏览器：
+选择已配置的网站，程序按以下流程启动浏览器：
 
 1. 创建临时用户数据目录，Playwright 启动浏览器并注入 Cookie（Chromium 原生加密写盘，登录态可靠）
 2. 页面加载完成后退出 Playwright，由程序直接拉起同一浏览器独立运行
@@ -95,7 +95,7 @@ python main.py
 导出后：
 
 - 生成 `action_config_output.json`（程序根目录），只包含密文，可以提交到 GitHub 仓库
-- 控制台打印 **Fernet 密钥**（base64-urlsafe），提示存入 GitHub Secret（建议名称 `COOKIE_FERNET_KEY`）
+- 控制台打印 **Fernet 密钥**（base64-urlsafe），提示存入 GitHub Secret（名称 `COOKIE_FERNET_KEY`）
 
 ```json
 {
@@ -112,7 +112,7 @@ python main.py
 
 - `global`：Action 侧直接使用的固定请求参数
 - `cookies[].site`：站点域名；`cookies[].fernet_token`：该站点 Cookie 的 Fernet 密文（用上面打印的密钥解密）
-- Action 侧按 `https://{site}` 自动拼接访问地址，无需 `targetUrl` / `signUrl`
+- Action 侧按 `https://{site}` 自动拼接访问地址
 
 > ⚠ 如果之后修改了访问密码，必须重新导出，并同步更新 GitHub Secret 与仓库中的 `action_config_output.json`。
 
