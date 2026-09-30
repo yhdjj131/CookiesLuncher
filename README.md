@@ -213,7 +213,7 @@ CookieLuncher/
 
 ## 技术要点（简版）
 
-- **B 站 about:blank 修复（方案C）**：Playwright 仅用于启动浏览器上下文并注入 Cookie（Chromium 原生加密写盘，登录态可靠）；页面加载完成后退出 Playwright，改用 `subprocess` 直接拉起同一 profile 的浏览器独立运行。不做 JS 修补 / 点击拦截（会破坏页面跳转），不手写 Cookie 数据库（外部无法生成合法加密数据）。
+
 - **双后端参数一致**：thorium 与 system 共用同一套启动参数与注入逻辑，无分支差异。
 - **采集不过滤**：手动登录采集到的有效 Cookie 全部保留，只剔除缺失关键字段或完全重复的条目。
 - **导出只含密文**：`action_config_output.json` 不含明文 Cookie、不含盐、不含密码。
