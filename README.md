@@ -1,4 +1,4 @@
-# BiliCookieLauncher（通用 Cookie 启动器）
+# CookiesLuncher（通用 Cookie 启动器）
 
 一个中文控制台程序：启动时校验密码，密码验证成功后进入主菜单，由用户手动选择进入「运行模式」或「修改模式」。
 
