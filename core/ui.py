@@ -349,14 +349,16 @@ def _action_capture(context: AppContext) -> None:
         except CookieParseError as exc:
             print_error(str(exc))
 
-    # 自动识别域名，允许用户手动修改
-    modified = read_text("识别到域名：{}，回车确认或输入新域名: ".format(site), allow_empty=True)
-    if modified.strip():
+    # 自动识别域名，允许用户手动修改（输入非法时重新提示，而不是直接中止流程）
+    while True:
+        modified = read_text("识别到域名：{}，回车确认或输入新域名: ".format(site), allow_empty=True)
+        if not modified.strip():
+            break
         try:
             site = normalize_site(modified)
+            break
         except CookieParseError as exc:
             print_error(str(exc))
-            return
 
     try:
         exists = bool(context.store.get(site))

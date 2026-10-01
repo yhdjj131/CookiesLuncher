@@ -1,0 +1,105 @@
+<UserControl x:Class="CookieLuncher.Views.Pages.ExportPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+    <StackPanel Margin="24,22,24,18">
+      <TextBlock Text="导出配置" Style="{StaticResource PageTitle}" />
+      <TextBlock Style="{StaticResource PageSubtitle}"
+                 Margin="0,8,0,0"
+                 TextWrapping="Wrap">
+        <Run Text="生成 GitHub Action 保活项目需要的 " /><Run Text="{Binding OutputFileName, Mode=OneWay}" /><Run Text=" 与 Fernet 密钥。输出文件只包含密文，不含明文 Cookie、盐值与密码。" />
+      </TextBlock>
+
+      <!-- 说明 -->
+      <Border Style="{StaticResource Card}" Margin="0,18,0,0">
+        <StackPanel>
+          <TextBlock Text="导出什么" Style="{StaticResource SectionTitle}" />
+          <TextBlock Style="{StaticResource Secondary}" Margin="0,10,0,0" TextWrapping="Wrap">
+            <Run Text="1. " /><Run Text="{Binding OutputFileName, Mode=OneWay}" /><Run Text=" —— 每个站点一条 Fernet 密文，可提交到 GitHub 仓库。" />
+          </TextBlock>
+          <TextBlock Style="{StaticResource Secondary}" Margin="0,5,0,0" TextWrapping="Wrap">
+            <Run Text="2. Fernet 密钥（base64-urlsafe）—— 保存到 GitHub Secret，名称建议为 " /><Run Text="{Binding SecretName, Mode=OneWay}" /><Run Text="。" />
+          </TextBlock>
+          <TextBlock Style="{StaticResource Secondary}" Margin="0,5,0,0"
+                     Text="3. 修改访问密码后必须重新导出，并同步更新仓库文件与 Secret，否则解密会失败。" />
+        </StackPanel>
+      </Border>
+
+      <!-- 二重密码 -->
+      <Border Style="{StaticResource Card}" Margin="0,14,0,0">
+        <StackPanel>
+          <TextBlock Text="二重导出密码" Style="{StaticResource SectionTitle}" />
+          <TextBlock Style="{StaticResource Secondary}" Margin="0,8,0,0"
+                     Text="导出前必须输入二重密码，用于避免他人误用本机已解锁的程序导出 Cookie。密码仅保存 Argon2 哈希，明文不落盘。" />
+
+          <Border Style="{StaticResource Notice}"
+                  Margin="0,12,0,0"
+                  Visibility="{Binding SecondPasswordMissing, Converter={StaticResource BoolToVisibility}}">
+            <DockPanel>
+              <Button DockPanel.Dock="Right"
+                      Style="{StaticResource PrimaryButton}"
+                      Content="现在设置"
+                      Margin="12,0,0,0"
+                      Command="{Binding SetSecondPasswordCommand}" />
+              <TextBlock Text="尚未设置二重导出密码，首次导出前需要先设置。"
+                         FontSize="12"
+                         TextWrapping="Wrap"
+                         VerticalAlignment="Center"
+                         Foreground="{StaticResource Brush.WarningText}" />
+            </DockPanel>
+          </Border>
+
+          <StackPanel Orientation="Horizontal" Margin="0,14,0,0">
+            <Button Style="{StaticResource PrimaryButton}"
+                    Content="导出配置"
+                    Command="{Binding ExportCommand}" />
+            <Button Style="{StaticResource GhostButton}"
+                    Content="重新设置二重密码"
+                    Margin="6,0,0,0"
+                    Visibility="{Binding SecondPasswordSet, Converter={StaticResource BoolToVisibility}}"
+                    Command="{Binding SetSecondPasswordCommand}" />
+          </StackPanel>
+
+          <TextBlock Margin="0,10,0,0"
+                     FontSize="12"
+                     TextWrapping="Wrap"
+                     Foreground="{StaticResource Brush.TextSecondary}"
+                     Text="{Binding Status}"
+                     Visibility="{Binding HasStatus, Converter={StaticResource BoolToVisibility}}" />
+        </StackPanel>
+      </Border>
+
+      <!-- 导出结果 -->
+      <Border Style="{StaticResource Card}"
+              Margin="0,14,0,0"
+              Visibility="{Binding HasResult, Converter={StaticResource BoolToVisibility}}">
+        <StackPanel>
+          <TextBlock Text="导出结果" Style="{StaticResource SectionTitle}" />
+          <TextBlock Style="{StaticResource Secondary}" Margin="0,8,0,0" Text="{Binding Summary}" />
+
+          <TextBlock Text="输出文件" Style="{StaticResource FieldLabel}" Margin="0,16,0,6" />
+          <TextBox Style="{StaticResource ReadOnlyCode}" Text="{Binding OutputPath, Mode=OneWay}" MinHeight="34" />
+
+          <TextBlock Text="Fernet 密钥（存入 GitHub Secret）" Style="{StaticResource FieldLabel}" Margin="0,14,0,6" />
+          <TextBox Style="{StaticResource ReadOnlyCode}" Text="{Binding FernetKey, Mode=OneWay}" MinHeight="60" />
+
+          <StackPanel Orientation="Horizontal" Margin="0,14,0,0">
+            <Button Style="{StaticResource SecondaryButton}"
+                    Content="复制密钥"
+                    Command="{Binding CopyKeyCommand}" />
+            <Button Style="{StaticResource GhostButton}"
+                    Content="打开数据目录"
+                    Margin="4,0,0,0"
+                    Command="{Binding OpenFolderCommand}" />
+          </StackPanel>
+
+          <Border Style="{StaticResource Notice}" Margin="0,14,0,0">
+            <TextBlock FontSize="12" TextWrapping="Wrap" Foreground="{StaticResource Brush.WarningText}">
+              <Run Text="请妥善保管该密钥：它等价于 Cookie 的访问权限。修改访问密码后需要重新导出，并同步更新 GitHub Secret 与仓库中的 " /><Run Text="{Binding OutputFileName, Mode=OneWay}" /><Run Text="。" />
+            </TextBlock>
+          </Border>
+        </StackPanel>
+      </Border>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

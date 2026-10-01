@@ -15,6 +15,17 @@ import sys
 from pathlib import Path
 from typing import Any, Dict, Optional, Tuple
 
+# 允许的日志级别
+VALID_LOG_LEVELS = ("DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL")
+
+# 浏览器后端：thorium = 内置 Thorium（离线自包含），system = 本机 Edge / Chrome
+BACKEND_THORIUM = "thorium"
+BACKEND_SYSTEM = "system"
+VALID_BROWSER_BACKENDS = (BACKEND_THORIUM, BACKEND_SYSTEM)
+
+# 盐值长度（字节）
+SALT_BYTES = 16
+
 # 默认配置，字段含义见 README
 DEFAULT_CONFIG: Dict[str, Any] = {
     "password_hash": "",
@@ -22,17 +33,12 @@ DEFAULT_CONFIG: Dict[str, Any] = {
     "second_password_hash": "",
     "log_level": "INFO",
     "log_retention_days": 30,
+    "browser_backend": BACKEND_THORIUM,
     "browser": {
         "headless": False,
         "window_size": "maximized",
     },
 }
-
-# 允许的日志级别
-VALID_LOG_LEVELS = ("DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL")
-
-# 盐值长度（字节）
-SALT_BYTES = 16
 
 # 形如 1280x720 / 1280*720 / 1280,720 的窗口尺寸
 _WINDOW_SIZE_RE = re.compile(r"^\s*(\d{3,5})\s*[xX*,]\s*(\d{3,5})\s*$")
@@ -73,6 +79,19 @@ def generate_salt() -> str:
     return base64.b64encode(secrets.token_bytes(SALT_BYTES)).decode("ascii")
 
 
+def normalize_browser_backend(value: Any) -> str:
+    """校验并规范化 browser_backend 配置。
+
+    Args:
+        value: 配置值，大小写与首尾空格不敏感。
+
+    Returns:
+        ``thorium`` 或 ``system``；取值非法时回退为 ``thorium``。
+    """
+    backend = str(value or "").strip().lower()
+    return backend if backend in VALID_BROWSER_BACKENDS else BACKEND_THORIUM
+
+
 def _deep_merge(defaults: Dict[str, Any], data: Dict[str, Any]) -> Dict[str, Any]:
     """把用户配置深度合并到默认配置之上，缺失字段自动补齐。"""
     merged: Dict[str, Any] = dict(defaults)
@@ -109,6 +128,8 @@ def normalize_config(data: Dict[str, Any]) -> Dict[str, Any]:
 
     level = str(config.get("log_level") or "INFO").strip().upper()
     config["log_level"] = level if level in VALID_LOG_LEVELS else "INFO"
+
+    config["browser_backend"] = normalize_browser_backend(config.get("browser_backend"))
 
     try:
         retention = int(config.get("log_retention_days", 30))

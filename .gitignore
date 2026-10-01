@@ -17,6 +17,13 @@ logs/
 .DS_Store
 Thumbs.db
 
+# ===== C# / WPF 桌面版构建产物 =====
+bin/
+obj/
+.vs/
+*.user
+*.suo
+
 # ===== 打包相关文件（不入库） =====
 build.bat
 prepare_browsers.bat
