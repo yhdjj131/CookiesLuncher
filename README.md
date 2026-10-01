@@ -1,4 +1,4 @@
-# CookieLuncher（通用 Cookie 启动器）
+# CookieLuncher（Cookie 启动器）
 
 一个本地运行的中文控制台程序：把你的网站登录 Cookie 加密保存在本机，需要时一键注入浏览器打开网站，也可以手动登录采集 Cookie、导出给 GitHub Action 保活项目使用。
 
