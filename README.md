@@ -11,7 +11,7 @@
 - **B 站视频正常播放**：内置 Thorium 浏览器自带 H.264/AAC 专有编解码，普通 B 站视频可直接播放，`target="_blank"` 新标签跳转正常
 - **手动登录采集 Cookie**：打开可见浏览器让你登录账号/验证码，回车确认后自动采集全部有效 Cookie
 - **Cookie 管理**：粘贴导入（分号 / JSON / Cookie-Editor 格式）、查看、删除、修改密码，重复导入自动提示覆盖
-- **导出 GitHub Action 保活配置**：一键生成仅含密文的 `action_config_output.json` 和 Fernet 密钥，交给 GitHub Secret 使用，带二重密码保护
+- **导出 GitHub Action 保活配置**：一键生成仅含密文的 `action_config_output.json` 和 Fernet 密钥，直接对接配套的 [Keep-Alive](https://github.com/yhdjj131/Keep-Alive) 保活仓库定时自动保活，带二重密码保护
 - **双浏览器后端**：内置 Thorium（离线自包含）或本机 Edge/Chrome（DRM 会员视频），`config.json` 一键切换
 
 ---
@@ -115,6 +115,20 @@ python main.py
 - Action 侧按 `https://{site}` 自动拼接访问地址
 
 > ⚠ 如果之后修改了访问密码，必须重新导出，并同步更新 GitHub Secret 与仓库中的 `action_config_output.json`。
+
+### 4. 对接 Keep-Alive 保活仓库
+
+导出的 `action_config_output.json` 可直接交给配套的 **Keep-Alive** 保活仓库（https://github.com/yhdjj131/Keep-Alive ），由 GitHub Actions 定时访问你的站点，保持各网站登录会话长期有效。
+
+对接步骤：
+
+1. 在本程序完成「导出 Cookie」，得到 `action_config_output.json` 与控制台打印的 Fernet 密钥
+2. 把 `action_config_output.json` 提交到 Keep-Alive 仓库（覆盖同名文件并推送；也可以先 **Fork** 该仓库再配置，详见其 README 的「其他用户 Fork 使用」）
+3. 在 Keep-Alive 仓库配置 Secret：**Settings → Secrets and variables → Actions → New repository secret**，Name 填 `COOKIE_FERNET_KEY`，Value 粘贴导出的密钥
+4. Keep-Alive 内置定时任务：**每周二、四、六 北京时间 12:00** 自动运行保活（脚本启动后随机延迟 0~7 分钟执行；Fork 的仓库需先在 Actions 页手动 **Enable workflows**）
+5. 到 Keep-Alive 的 **Actions** 页面查看任务摘要：总站点数、成功/失败站点及原因一目了然
+
+> 修改访问密码后：重新导出 → 同时更新 Keep-Alive 仓库中的 `action_config_output.json` 与 `COOKIE_FERNET_KEY` Secret，两者必须匹配，否则解密失败、任务全部报错。
 
 ---
 
