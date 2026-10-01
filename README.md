@@ -231,3 +231,22 @@ CookieLuncher/
 - **双后端参数一致**：thorium 与 system 共用同一套启动参数与注入逻辑，无分支差异。
 - **采集不过滤**：手动登录采集到的有效 Cookie 全部保留，只剔除缺失关键字段或完全重复的条目。
 - **导出只含密文**：`action_config_output.json` 不含明文 Cookie、不含盐、不含密码。
+
+---
+
+## 致谢与免责
+
+**Thorium 浏览器**
+
+- 本程序的 `thorium` 后端内置 **Thorium** —— 一个基于 Chromium 的第三方衍生浏览器（项目来源：https://github.com/Alex313031/Thorium ），自带专有音视频编解码能力。
+- Thorium 为独立社区项目，与 Chromium 项目及本程序作者均无关联；分发包中附带的 Thorium 二进制遵循其项目自身许可（详见其 GitHub 仓库的 LICENSE）。
+- 如您介意使用第三方浏览器构建，可将 `browser_backend` 改为 `system`，使用本机 Edge / Chrome。
+
+**兼容性声明**
+
+- Playwright 官方仅保证对自带 Chromium 的支持；本程序通过 `executable_path` 调用 Thorium 属于兼容性使用，CDP 协议版本差异可能导致连接失败或无法采集 Cookie，出现此类问题时优先切换 `system` 后端。
+- 浏览器登录采集仅在本地进行；Cookie 属于身份凭证，请勿向他人透露，也勿上传任何包含明文 Cookie 的文件。
+
+**Windows 安全提示**
+
+- 分发包（Releases 中的 CookiesLuncher.zip）未经代码签名，Windows 首次运行时可能弹出 SmartScreen「未知发布者」提示，属正常现象，确认来源后选择「仍要运行」即可。
