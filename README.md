@@ -69,6 +69,7 @@ python main.py
 
 - Windows 10 / 11
 - .NET 10 SDK（构建需要；仅运行需要 .NET 10 Desktop Runtime）
+- 注意：**.NET 10 Desktop Runtime 不是 Windows 自带的**（系统内置的是 .NET Framework 4.x），需要从 [dotnet.microsoft.com](https://dotnet.microsoft.com/download/dotnet/10.0) 单独安装；或把下面发布命令改为 `--self-contained true` 自包含发布，目标机可免装运行时（体积会增加约 100–200MB）
 
 ### 构建与运行
 
