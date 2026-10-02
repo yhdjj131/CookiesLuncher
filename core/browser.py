@@ -33,7 +33,7 @@ import time
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from .config import is_maximized, parse_window_size
+from .config import BACKEND_SYSTEM, BACKEND_THORIUM, is_maximized, parse_window_size
 from .cookie_parser import normalize_site
 
 # 临时用户数据目录前缀
@@ -44,10 +44,6 @@ HEADLESS_GRACE_SECONDS = 5.0
 
 # 固定窗口尺寸时 Chromium 的窗口尺寸参数
 _WINDOW_ARG_TEMPLATE = "--window-size={},{}"
-
-# 双后端取值
-BACKEND_THORIUM = "thorium"
-BACKEND_SYSTEM = "system"
 
 # thorium 内置目录约定：external_browsers/thorium-win64/thorium.exe
 THORIUM_DIR_NAME = "thorium-win64"

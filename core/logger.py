@@ -177,10 +177,13 @@ def setup_logger(
     file_handler.setFormatter(formatter)
     logger.addHandler(file_handler)
 
-    console_handler = logging.StreamHandler(stream=sys.stderr)
-    console_handler.setLevel(getattr(logging, str(console_level).upper(), logging.WARNING))
-    console_handler.setFormatter(formatter)
-    logger.addHandler(console_handler)
+    # 无控制台环境（例如 PyInstaller --noconsole 打包、stdout/stderr 被重定向为 None）下
+    # 不能添加 StreamHandler，否则每条日志都会在 emit 内抛 AttributeError。
+    if sys.stderr is not None:
+        console_handler = logging.StreamHandler(stream=sys.stderr)
+        console_handler.setLevel(getattr(logging, str(console_level).upper(), logging.WARNING))
+        console_handler.setFormatter(formatter)
+        logger.addHandler(console_handler)
 
     return logger
 

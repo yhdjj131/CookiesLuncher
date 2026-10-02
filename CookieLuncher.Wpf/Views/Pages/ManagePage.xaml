@@ -1,0 +1,101 @@
+<UserControl x:Class="CookieLuncher.Views.Pages.ManagePage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Grid Margin="24,22,24,18">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="*" />
+      <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
+
+    <StackPanel Grid.Row="0">
+      <DockPanel>
+        <Button DockPanel.Dock="Right"
+                Style="{StaticResource SecondaryButton}"
+                Content="刷新"
+                VerticalAlignment="Top"
+                Command="{Binding RefreshCommand}" />
+        <TextBlock Text="Cookie 管理" Style="{StaticResource PageTitle}" />
+      </DockPanel>
+
+      <TextBlock Style="{StaticResource PageSubtitle}"
+                 Margin="0,8,0,0"
+                 Text="添加或替换网站 Cookie、查看与删除已配置网站、修改访问密码。所有 Cookie 加密保存在本机 cookies.enc。" />
+
+      <StackPanel Orientation="Horizontal" Margin="0,16,0,0">
+        <Button Style="{StaticResource PrimaryButton}"
+                Content="粘贴导入"
+                Command="{Binding PasteImportCommand}" />
+        <Button Style="{StaticResource SecondaryButton}"
+                Content="浏览器采集"
+                Margin="8,0,0,0"
+                Command="{Binding CaptureCommand}" />
+        <Button Style="{StaticResource GhostButton}"
+                Content="修改访问密码"
+                Margin="4,0,0,0"
+                Command="{Binding ChangePasswordCommand}" />
+      </StackPanel>
+    </StackPanel>
+
+    <Grid Grid.Row="1" Margin="0,18,0,0">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="16" />
+        <ColumnDefinition Width="330" />
+      </Grid.ColumnDefinitions>
+
+      <!-- 网站列表 -->
+      <Grid Grid.Column="0">
+        <ListBox Style="{StaticResource PlainListBox}"
+                 ItemContainerStyle="{StaticResource SiteListBoxItem}"
+                 ItemsSource="{Binding Sites}"
+                 SelectedItem="{Binding Selected, Mode=TwoWay}" />
+        <TextBlock Style="{StaticResource Muted}"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   Text="暂无已配置的网站，请先「粘贴导入」或「浏览器采集」。"
+                   Visibility="{Binding IsEmpty, Converter={StaticResource BoolToVisibility}}" />
+      </Grid>
+
+      <!-- 详情 -->
+      <Border Grid.Column="2" Style="{StaticResource Card}" VerticalAlignment="Top">
+        <StackPanel>
+          <TextBlock Text="网站详情" Style="{StaticResource SectionTitle}" />
+          <TextBlock Text="{Binding DetailSummary}"
+                     Margin="0,10,0,0"
+                     FontSize="13"
+                     FontWeight="SemiBold"
+                     TextWrapping="Wrap" />
+
+          <TextBlock Text="Cookie 名称（不显示值）" Style="{StaticResource FieldLabel}" Margin="0,16,0,6" />
+          <Border Background="{StaticResource Brush.SurfaceAlt}"
+                  BorderBrush="{StaticResource Brush.Border}"
+                  BorderThickness="1"
+                  CornerRadius="6"
+                  Padding="10,9"
+                  MinHeight="96">
+            <TextBlock Text="{Binding CookieNames}"
+                       FontFamily="{StaticResource Font.Mono}"
+                       FontSize="11.5"
+                       TextWrapping="Wrap"
+                       Foreground="{StaticResource Brush.TextSecondary}" />
+          </Border>
+
+          <Button Style="{StaticResource DangerButton}"
+                  Content="删除该网站"
+                  HorizontalAlignment="Stretch"
+                  Margin="0,16,0,0"
+                  Command="{Binding DeleteCommand}" />
+        </StackPanel>
+      </Border>
+    </Grid>
+
+    <TextBlock Grid.Row="2"
+               Margin="0,10,0,0"
+               FontSize="12"
+               TextWrapping="Wrap"
+               Foreground="{StaticResource Brush.TextSecondary}"
+               Text="{Binding Status}"
+               Visibility="{Binding HasStatus, Converter={StaticResource BoolToVisibility}}" />
+  </Grid>
+</UserControl>

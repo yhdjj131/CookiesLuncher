@@ -1,0 +1,106 @@
+<UserControl x:Class="CookieLuncher.Views.Pages.LaunchPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Grid Margin="24,22,24,18">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="*" />
+      <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
+
+    <!-- 标题 -->
+    <DockPanel Grid.Row="0">
+      <Button DockPanel.Dock="Right"
+              Style="{StaticResource SecondaryButton}"
+              Content="刷新"
+              VerticalAlignment="Top"
+              Command="{Binding RefreshCommand}" />
+      <TextBlock Text="启动浏览器" Style="{StaticResource PageTitle}" />
+    </DockPanel>
+
+    <StackPanel Grid.Row="1" Margin="0,8,0,0">
+      <TextBlock Style="{StaticResource PageSubtitle}"
+                 Text="选择网站后，程序会注入已加密保存的 Cookie 并打开浏览器；浏览器关闭后自动清理临时数据。" />
+      <Border Style="{StaticResource Notice}"
+              Margin="0,14,0,0"
+              Visibility="{Binding IsSystemBackend, Converter={StaticResource BoolToVisibility}}">
+        <DockPanel>
+          <TextBlock DockPanel.Dock="Right"
+                     Text="system"
+                     FontSize="11"
+                     Margin="10,0,0,0"
+                     Foreground="{StaticResource Brush.WarningText}" />
+          <TextBlock Text="{Binding BackendNotice}"
+                     FontSize="12"
+                     TextWrapping="Wrap"
+                     Foreground="{StaticResource Brush.WarningText}" />
+        </DockPanel>
+      </Border>
+    </StackPanel>
+
+    <!-- 网站列表 / 空状态 -->
+    <Grid Grid.Row="2" Margin="0,16,0,0">
+      <ScrollViewer VerticalScrollBarVisibility="Auto"
+                    HorizontalScrollBarVisibility="Disabled"
+                    IsEnabled="{Binding IsIdle}">
+        <ItemsControl ItemsSource="{Binding Sites}">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate>
+              <Border Background="{StaticResource Brush.Surface}"
+                      BorderBrush="{StaticResource Brush.Border}"
+                      BorderThickness="1"
+                      CornerRadius="8"
+                      Padding="14,11"
+                      Margin="0,0,0,6"
+                      SnapsToDevicePixels="True">
+                <DockPanel>
+                  <Button DockPanel.Dock="Right"
+                          Style="{StaticResource PrimaryButton}"
+                          Content="启动"
+                          MinWidth="76"
+                          Margin="14,0,0,0"
+                          VerticalAlignment="Center"
+                          Command="{Binding LaunchCommand}" />
+                  <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="{Binding Site}" FontWeight="SemiBold" FontSize="13.5" />
+                    <TextBlock Text="{Binding CountText}"
+                               Foreground="{StaticResource Brush.TextMuted}"
+                               FontSize="11.5"
+                               Margin="0,3,0,0" />
+                  </StackPanel>
+                </DockPanel>
+              </Border>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </ScrollViewer>
+
+      <StackPanel HorizontalAlignment="Center"
+                  VerticalAlignment="Center"
+                  Visibility="{Binding IsEmpty, Converter={StaticResource BoolToVisibility}}">
+        <TextBlock Text="还没有配置任何网站"
+                   FontSize="14"
+                   Foreground="{StaticResource Brush.TextSecondary}"
+                   HorizontalAlignment="Center" />
+        <TextBlock Style="{StaticResource Muted}"
+                   HorizontalAlignment="Center"
+                   Margin="0,6,0,0"
+                   Text="先到「Cookie 管理」中导入或采集 Cookie，即可一键启动。" />
+        <Button Style="{StaticResource PrimaryButton}"
+                Content="去添加 Cookie"
+                HorizontalAlignment="Center"
+                Margin="0,16,0,0"
+                Command="{Binding GoToManageCommand}" />
+      </StackPanel>
+    </Grid>
+
+    <TextBlock Grid.Row="3"
+               Margin="0,10,0,0"
+               FontSize="12"
+               TextWrapping="Wrap"
+               Foreground="{StaticResource Brush.TextSecondary}"
+               Text="{Binding Status}"
+               Visibility="{Binding HasStatus, Converter={StaticResource BoolToVisibility}}" />
+  </Grid>
+</UserControl>

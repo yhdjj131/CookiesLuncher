@@ -1,0 +1,49 @@
+<Window x:Class="CookieLuncher.Views.AuthWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Cookie 启动器"
+        Width="460"
+        SizeToContent="Height"
+        ResizeMode="NoResize"
+        ShowInTaskbar="True"
+        WindowStartupLocation="CenterScreen"
+        Style="{StaticResource AppWindow}">
+  <Border Background="{StaticResource Brush.Surface}" Padding="34,30,34,28">
+    <StackPanel>
+      <TextBlock Text="{Binding Title}" Style="{StaticResource PageTitle}" />
+      <TextBlock Text="{Binding Subtitle}" Style="{StaticResource PageSubtitle}" Margin="0,8,0,0" />
+
+      <TextBlock Text="{Binding PasswordLabel}" Style="{StaticResource FieldLabel}" Margin="0,24,0,6" />
+      <PasswordBox x:Name="PasswordInput"
+                   Style="{StaticResource InputPassword}"
+                   PasswordChanged="OnPasswordChanged" />
+
+      <StackPanel x:Name="ConfirmGroup" Visibility="Collapsed" Margin="0,16,0,0">
+        <TextBlock Text="再次输入新密码" Style="{StaticResource FieldLabel}" />
+        <PasswordBox x:Name="ConfirmInput"
+                     Style="{StaticResource InputPassword}"
+                     PasswordChanged="OnPasswordChanged" />
+      </StackPanel>
+
+      <TextBlock x:Name="ErrorText"
+                 Foreground="{StaticResource Brush.Danger}"
+                 FontSize="12"
+                 TextWrapping="Wrap"
+                 Margin="0,12,0,0"
+                 Visibility="{Binding HasError, Converter={StaticResource BoolToVisibility}}"
+                 Text="{Binding Error}" />
+
+      <Button x:Name="ConfirmButton"
+              Style="{StaticResource PrimaryButton}"
+              Content="{Binding ConfirmText}"
+              HorizontalAlignment="Stretch"
+              Margin="0,22,0,0"
+              IsDefault="True"
+              Click="OnConfirmClick" />
+
+      <TextBlock Style="{StaticResource Muted}"
+                 Margin="0,16,0,0"
+                 Text="提示：密码只以 Argon2 哈希保存，Cookie 使用 Fernet 加密；忘记密码后 Cookie 无法找回。" />
+    </StackPanel>
+  </Border>
+</Window>

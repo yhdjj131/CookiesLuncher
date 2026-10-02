@@ -1,0 +1,91 @@
+<Window x:Class="CookieLuncher.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Cookie 启动器"
+        Width="1000"
+        Height="680"
+        MinWidth="860"
+        MinHeight="580"
+        WindowStartupLocation="CenterScreen"
+        Style="{StaticResource AppWindow}">
+  <Grid>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="204" />
+      <ColumnDefinition Width="*" />
+    </Grid.ColumnDefinitions>
+
+    <!-- 侧栏 -->
+    <Border Grid.Column="0"
+            Background="{StaticResource Brush.Surface}"
+            BorderBrush="{StaticResource Brush.Border}"
+            BorderThickness="0,0,1,0">
+      <DockPanel>
+        <StackPanel DockPanel.Dock="Top" Margin="20,22,20,16">
+          <TextBlock Text="Cookie 启动器" FontSize="15" FontWeight="SemiBold" />
+          <TextBlock x:Name="BackendText"
+                     FontSize="11.5"
+                     Foreground="{StaticResource Brush.TextMuted}"
+                     Margin="0,6,0,0"
+                     TextWrapping="Wrap" />
+        </StackPanel>
+
+        <StackPanel DockPanel.Dock="Bottom" Margin="10,0,10,12">
+          <Button Style="{StaticResource GhostButton}"
+                  HorizontalAlignment="Stretch"
+                  HorizontalContentAlignment="Left"
+                  Content="设置"
+                  Click="OnSettingsClick" />
+          <Button Style="{StaticResource GhostButton}"
+                  HorizontalAlignment="Stretch"
+                  HorizontalContentAlignment="Left"
+                  Content="打开数据目录"
+                  Click="OnOpenDataDirClick" />
+        </StackPanel>
+
+        <ListBox x:Name="NavList"
+                 Style="{StaticResource PlainListBox}"
+                 ItemContainerStyle="{StaticResource NavListBoxItem}"
+                 Margin="10,0,10,0"
+                 VerticalAlignment="Top"
+                 SelectionChanged="OnNavSelectionChanged">
+          <ListBoxItem>
+            <TextBlock Text="启动浏览器"
+                       Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" />
+          </ListBoxItem>
+          <ListBoxItem>
+            <TextBlock Text="Cookie 管理"
+                       Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" />
+          </ListBoxItem>
+          <ListBoxItem>
+            <TextBlock Text="导出配置"
+                       Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" />
+          </ListBoxItem>
+        </ListBox>
+      </DockPanel>
+    </Border>
+
+    <!-- 内容区 -->
+    <DockPanel Grid.Column="1">
+      <Border DockPanel.Dock="Bottom"
+              Background="{StaticResource Brush.Surface}"
+              BorderBrush="{StaticResource Brush.Border}"
+              BorderThickness="0,1,0,0"
+              Padding="22,9">
+        <DockPanel>
+          <TextBlock x:Name="DataDirText"
+                     DockPanel.Dock="Right"
+                     FontSize="11.5"
+                     Foreground="{StaticResource Brush.TextMuted}"
+                     Margin="16,0,0,0"
+                     TextTrimming="CharacterEllipsis" />
+          <TextBlock x:Name="StatusMessage"
+                     FontSize="12"
+                     Foreground="{StaticResource Brush.TextSecondary}"
+                     TextTrimming="CharacterEllipsis" />
+        </DockPanel>
+      </Border>
+
+      <ContentControl x:Name="PageHost" />
+    </DockPanel>
+  </Grid>
+</Window>

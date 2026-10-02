@@ -1,6 +1,13 @@
 # CookieLuncher（Cookie 启动器）
 
-一个本地运行的中文控制台程序：把你的网站登录 Cookie 加密保存在本机，需要时一键注入浏览器打开网站，也可以手动登录采集 Cookie、导出给 GitHub Action 保活项目使用。
+一个本地运行的中文程序：把你的网站登录 Cookie 加密保存在本机，需要时一键注入浏览器打开网站，也可以手动登录采集 Cookie、导出给 GitHub Action 保活项目使用。
+
+程序提供两种界面，**共用同一套数据文件（`config.json` / `cookies.enc` / `logs`）与同一套加密实现**，可以随时互换使用：
+
+| 界面 | 入口 | 说明 |
+| --- | --- | --- |
+| 控制台版 | `python main.py` | 纯 Python，脚本化友好，无额外运行时 |
+| WPF 桌面版 | `CookieLuncher.Wpf/` | C# / .NET 10 + WPF 窗口界面，鼠标操作，不需要 Python |
 
 ---
 
@@ -50,6 +57,67 @@ python main.py
   0. 退出程序
 请选择 [0-3]:
 ```
+
+---
+
+## WPF 桌面版（可选界面）
+
+除控制台版外，仓库内还提供 C# / .NET 10 的 WPF 窗口界面（`CookieLuncher.Wpf/`），
+功能与数据格式与控制台版完全对齐，适合不习惯命令行或希望直接复制密钥的场景。
+
+### 环境要求
+
+- Windows 10 / 11
+- .NET 10 SDK（构建需要；仅运行需要 .NET 10 Desktop Runtime）
+
+### 构建与运行
+
+```powershell
+cd CookieLuncher.Wpf
+dotnet build
+dotnet run
+
+# 发布单文件（需要目标机安装 .NET 10 Desktop Runtime）
+dotnet publish -c Release -r win-x64 --self-contained false -p:PublishSingleFile=true
+```
+
+### 数据目录
+
+WPF 版默认把 `config.json` / `cookies.enc` / `logs` 放在**可执行文件所在目录**；
+在 `CookieLuncher.Wpf/bin/...` 下调试时会自动向上找到仓库根目录（含 `core/crypto.py` 的目录），
+直接复用 Python 版已有的数据文件。也可以用命令行参数或环境变量显式指定：
+
+```powershell
+dotnet run -- --root D:\CookieData
+$env:COOKIELUNCHER_ROOT = "D:\CookieData"; dotnet run
+```
+
+### 界面结构
+
+- **启动浏览器**：列出已配置网站，点击「启动」即注入 Cookie 并打开浏览器；浏览器关闭后自动清理临时数据
+- **Cookie 管理**：粘贴导入、浏览器登录采集、查看 Cookie 名称（不显示值）、删除网站、修改访问密码
+- **导出配置**：校验二重导出密码后生成 `action_config_output.json`，界面直接展示 Fernet 密钥并可一键复制
+- **设置**：切换 `browser_backend`、无头模式、窗口尺寸、日志级别与日志保留天数
+- 底部状态栏显示最近一条警告信息与数据目录路径
+
+### 与控制台版互通
+
+两版使用完全相同的文件格式，可以交替使用：
+
+- `config.json`：字段、默认值、合并规则一致，两版读写都不会丢失字段
+- `cookies.enc`：Fernet 加密，密钥由「密码 + `encryption_salt`」经 PBKDF2-HMAC-SHA256（200000 次迭代）派生，两版可互相解密
+- `action_config_output.json`：`global` 参数与 `fernet_token` 结构一致，可直接交给 Keep-Alive 保活仓库
+
+即：用控制台版添加的 Cookie，WPF 版可以直接解锁使用；反之亦然。
+
+### 测试
+
+```powershell
+dotnet test CookieLuncher.Wpf.Tests
+```
+
+测试覆盖与 Python 版互通的加密夹具（Argon2 PHC 字符串、Fernet 令牌）、Cookie 解析、
+配置读写与规范化、`cookies.enc` 存储、导出结构与日志脱敏。
 
 ---
 
@@ -158,6 +226,8 @@ python main.py
 
 > `password_hash` 与 `encryption_salt` 必须成对保留，改动任一个都会导致 `cookies.enc` 无法解密。
 
+> `browser_backend` 由程序写入并校验（非法取值回退为 `thorium`），两版程序都使用同一字段切换后端。
+
 ---
 
 ## 支持的 Cookie 格式
@@ -202,7 +272,7 @@ A：优雅退出并清理浏览器临时目录；采集过程按回车前中断�
 
 ```
 CookieLuncher/
-├── main.py                   # 程序入口
+├── main.py                   # 控制台版程序入口
 ├── export_for_action.py      # 命令行导出脚本
 ├── config.json               # 配置（首次运行生成）
 ├── cookies.enc               # 加密 Cookie 存储（首次运行生成）
@@ -219,6 +289,23 @@ CookieLuncher/
 │   ├── logger.py             # 日志与脱敏
 │   ├── browser.py            # 双后端浏览器启动 / 注入 / 清理
 │   └── ui.py                 # 控制台菜单交互
+├── CookieLuncher.Wpf/        # WPF 桌面版
+│   ├── App.xaml / App.xaml.cs        # 启动流程：数据目录 → 配置 → 日志 → 解锁 → 主窗口
+│   ├── Core/                         # 与 core/*.py 一一对应的 C# 实现
+│   │   ├── AppPaths.cs               # 数据目录与路径解析
+│   │   ├── AppConfig.cs              # 配置读写（DEFAULT_CONFIG 与 Python 版一致）
+│   │   ├── Crypto.cs / Fernet.cs     # Argon2id + PBKDF2 + Fernet
+│   │   ├── CookieParser.cs           # Cookie 格式解析
+│   │   ├── CookieStore.cs            # cookies.enc 读写
+│   │   ├── Exporter.cs               # 导出 GitHub Action 配置
+│   │   ├── AppLogger.cs              # 日志与脱敏
+│   │   ├── BrowserLauncher.cs        # 浏览器启动 / 注入 / 清理
+│   │   ├── CookieCapture.cs          # 浏览器手动登录采集
+│   │   └── ProcessUtil.cs            # 进程树监控与临时目录清理
+│   ├── ViewModels/                   # 视图模型（解锁 / 启动 / 管理 / 导出）
+│   ├── Views/                        # 窗口、页面与对话框
+│   └── Themes/Theme.xaml             # 简洁浅色主题
+├── CookieLuncher.Wpf.Tests/  # xunit 测试（含与 Python 版互通的加密夹具）
 ├── requirements.txt
 └── README.md
 ```
