@@ -10,10 +10,6 @@
         Style="{StaticResource AppWindow}">
   <StackPanel Margin="26,24,26,20">
     <TextBlock Text="设置" FontSize="15" FontWeight="SemiBold" />
-    <TextBlock Style="{StaticResource Secondary}"
-               Margin="0,8,0,0"
-               Text="这里的改动会写入 config.json，与 Python 控制台版共用同一份配置。"
-               TextWrapping="Wrap" />
 
     <TextBlock Style="{StaticResource FieldLabel}" Margin="0,18,0,6" Text="浏览器后端" />
     <StackPanel Orientation="Horizontal">
@@ -27,9 +23,6 @@
                    Margin="8,0,0,0"
                    Content="本机 Edge / Chrome" />
     </StackPanel>
-    <TextBlock Style="{StaticResource Muted}"
-               Margin="0,8,0,0"
-               Text="thorium 需要把浏览器放到数据目录的 external_browsers\thorium-win64\；system 后端复用本机浏览器与登录态，适合 DRM 会员视频。" />
 
     <Grid Margin="0,16,0,0">
       <Grid.ColumnDefinitions>
