@@ -49,7 +49,21 @@
         <ListBox Style="{StaticResource PlainListBox}"
                  ItemContainerStyle="{StaticResource SiteListBoxItem}"
                  ItemsSource="{Binding Sites}"
-                 SelectedItem="{Binding Selected, Mode=TwoWay}" />
+                 SelectedItem="{Binding Selected, Mode=TwoWay}">
+          <ListBox.ItemTemplate>
+            <DataTemplate>
+              <StackPanel>
+                <TextBlock Text="{Binding Site}"
+                           FontSize="14"
+                           FontWeight="SemiBold" />
+                <TextBlock Text="{Binding CountText}"
+                           FontSize="11.5"
+                           Margin="0,2,0,0"
+                           Foreground="{StaticResource Brush.TextMuted}" />
+              </StackPanel>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
         <TextBlock Style="{StaticResource Muted}"
                    HorizontalAlignment="Center"
                    VerticalAlignment="Center"
